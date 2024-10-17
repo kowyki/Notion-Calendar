@@ -7,6 +7,7 @@ body {
   height: 100%;
 }
 body {
+  margin: 0;
   font-size: 100%;
   line-height: 1.5;
   font-family: "Roboto Condensed", sans-serif;
@@ -32,10 +33,10 @@ a {
 }
 .calendar-wrapper {
   width: 360px;
-  margin: 3em auto;
-  padding: 2em;
+  margin: 0;
+  padding: 1.5em;
   border: 1px solid #202020;
-  border-radius: 10px;
+  border-radius: 6px;
   background: #202020;
 }
   
@@ -43,11 +44,7 @@ header {
   display: flex;
   justify-content: space-between;
 }
-
-.days {
-  font-weight: bold;
-}
-
+  
 table {
   clear: both;
   width: 100%;
@@ -59,10 +56,10 @@ table {
   color: #7f7f7f;
 }
 td {
-  height: 48px;
+  height: 32px;
+  width: 14.28571429%;
   text-align: center;
   vertical-align: middle;
-  width: 14.28571429%;
 }
 td.not-current {
   color: #4f4f4f;
@@ -71,6 +68,10 @@ td.today {
   font-weight: 700;
   color: #fccc59;
   font-size: 1.5em;
+}
+
+.days {
+  font-weight: bold;
 }
   
 thead td {
