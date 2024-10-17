@@ -1,0 +1,282 @@
+<html>
+<header>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:400|Roboto+Condensed:400|Fjalla+One:400">
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css">
+<style> html,
+body {
+  height: 100%;
+}
+body {
+  font-size: 100%;
+  line-height: 1.5;
+  font-family: "Roboto Condensed", sans-serif;
+  background: rgba(0,0,0,0);
+}
+*,
+*:before,
+*:after {
+  box-sizing: border-box;
+}
+.group:after {
+  content: "";
+  display: table;
+  clear: both;
+}
+img {
+  max-width: 100%;
+  height: auto;
+  vertical-align: baseline;
+}
+a {
+  text-decoration: none;
+}
+.calendar-wrapper {
+  width: 360px;
+  margin: 3em auto;
+  padding: 2em;
+  border: 1px solid #202020;
+  border-radius: 10px;
+  background: #202020;
+}
+  
+header {
+  display: flex;
+  justify-content: space-between;
+}
+  
+table {
+  clear: both;
+  width: 100%;
+  background-color: #202020;
+  border: 1px solid #202020;
+  border-radius: 15px;
+  border-collapse: separate;
+  -moz-border-radius: 20px;
+  color: #7f7f7f;
+}
+td {
+  height: 48px;
+  text-align: center;
+  vertical-align: middle;
+  width: 14.28571429%;
+}
+td.not-current {
+  color: #4f4f4f;
+}
+td.today {
+  font-weight: 700;
+  color: #fccc59;
+  font-size: 1.5em;
+}
+  
+thead td {
+  border: none;
+  color: #979a9b;
+  text-transform: uppercase;
+  font-size: 1.5em;
+}
+#btnPrev {
+  float: left;
+}
+#btnPrev:before {
+  content: '\f104';
+  font-family: FontAwesome;
+  padding-right: 4px;
+}
+#btnNext {
+  float: right;
+}
+#btnNext:after {
+  content: '\f105';
+  font-family: FontAwesome;
+  padding-left: 4px;
+}
+#btnPrev,
+#btnNext {
+  background: transparent;
+  border: none;
+  outline: none;
+  font-size: 1em;
+  color: #7f7f7f;
+  cursor: pointer;
+  font-family: "Roboto Condensed", sans-serif;
+  text-transform: uppercase;
+  -webkit-transition: all 0.3s ease;
+  transition: all 0.3s ease;
+}
+#btnPrev:hover,
+#btnNext:hover {
+  color: #fccc59;
+  font-weight: bold;
+}
+ </style>
+<script>var Cal = function (divId) {
+  //Store div id
+  this.divId = divId;
+ 
+  // Days of week, starting on Sunday
+  this.DaysOfWeek = ["Пн", "Вт", "Ср", "Чт", "Пт", "Сб", "Вс"];
+ 
+  // Months, stating on January
+  this.Months = [
+    "Январь",
+    "Февраль",
+    "Март",
+    "Апрель",
+    "Май",
+    "Июнь",
+    "Июль",
+    "Август",
+    "Сентябрь",
+    "Октябрь",
+    "Ноябрь",
+    "Декабрь"
+  ];
+ 
+  // Set the current month, year
+  var d = new Date();
+ 
+  this.currMonth = d.getMonth();
+  this.currYear = d.getFullYear();
+  this.currDay = d.getDate();
+};
+ 
+// Goes to next month
+Cal.prototype.nextMonth = function () {
+  if (this.currMonth == 11) {
+    this.currMonth = 0;
+    this.currYear = this.currYear + 1;
+  } else {
+    this.currMonth = this.currMonth + 1;
+  }
+  this.showcurr();
+};
+ 
+// Goes to previous month
+Cal.prototype.previousMonth = function () {
+  if (this.currMonth == 0) {
+    this.currMonth = 11;
+    this.currYear = this.currYear - 1;
+  } else {
+    this.currMonth = this.currMonth - 1;
+  }
+  this.showcurr();
+};
+ 
+// Show current month
+Cal.prototype.showcurr = function () {
+  this.showMonth(this.currYear, this.currMonth);
+};
+ 
+// Show month (year, month)
+Cal.prototype.showMonth = function (y, m) {
+  var d = new Date(),
+    // First day of the week in the selected month
+    firstDayOfMonth = new Date(y, m, 0).getDay(),
+    // Last day of the selected month
+    lastDateOfMonth = new Date(y, m + 1, 0).getDate(),
+    // Last day of the previous month
+    lastDayOfLastMonth =
+      m == 0 ? new Date(y - 1, 11, 0).getDate() : new Date(y, m, 0).getDate();
+ 
+  var html = "<table>";
+ 
+  // Write selected month and year
+  html += "<thead><tr>";
+  html += '<td colspan="7">' + this.Months[m] + " " + y + "</td>";
+  html += "</tr></thead>";
+ 
+  // Write the header of the days of the week
+  html += '<tr class="days">';
+  for (var i = 0; i < this.DaysOfWeek.length; i++) {
+    html += "<td>" + this.DaysOfWeek[i] + "</td>";
+  }
+  html += "</tr>";
+ 
+  // Write the days
+  var i = 1;
+  do {
+    var dow = new Date(y, m, i).getDay();
+ 
+    // If Monday, start new row
+    if (dow == 1) {
+      html += "<tr>";
+    }
+    // If not Monday but first day of the month
+    // it will write the last days from the previous month
+    else if (i == 1) {
+      html += "<tr>";
+      var k = lastDayOfLastMonth - firstDayOfMonth + 1;
+      for (var j = 0; j < firstDayOfMonth; j++) {
+        html += '<td class="not-current">' + k + "</td>";
+        k++;
+      }
+    }
+ 
+    // Write the current day in the loop
+    var chk = new Date();
+    var chkY = chk.getFullYear();
+    var chkM = chk.getMonth();
+    if (chkY == this.currYear && chkM == this.currMonth && i == this.currDay) {
+      html += '<td class="today">' + i + "</td>";
+    } else {
+      html += '<td class="normal">' + i + "</td>";
+    }
+    // If Sunday, closes the row
+    if (dow == 7) {
+      html += "</tr>";
+    }
+    // If not Sunday, but last day of the selected month
+    // it will write the next few days from the next month
+    else if (i == lastDateOfMonth) {
+      var k = 1;
+      for (dow; dow < 7; dow++) {
+        html += '<td class="not-current">' + k + "</td>";
+        k++;
+      }
+    }
+ 
+    i++;
+  } while (i <= lastDateOfMonth);
+ 
+  // Closes table
+  html += "</table>";
+ 
+  // Write HTML to the div
+  document.getElementById(this.divId).innerHTML = html;
+};
+ 
+// On Load of the window
+window.onload = function () {
+  // Start calendar
+  var c = new Cal("divCal");
+  c.showcurr();
+ 
+  // Bind next and previous button clicks
+  getId("btnNext").onclick = function () {
+    c.nextMonth();
+  };
+  getId("btnPrev").onclick = function () {
+    c.previousMonth();
+  };
+};
+ 
+// Get element by id
+function getId(id) {
+  return document.getElementById(id);
+}
+ </script>
+<body>
+<div class="calendar-wrapper">
+  <header>
+    <button id="btnPrev" type="button">Назад</button>
+    <button id="btnNext" type="button">Вперёд</button>
+     
+  </header>
+
+  <div id="divCal"></div>
+</div>
+  
+</body>
+</head>
+</html>
